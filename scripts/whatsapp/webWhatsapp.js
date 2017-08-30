@@ -1,9 +1,9 @@
 // ==UserScript==
-// @name         Whatsapp Web - Image carrosel
-// @namespace    http://whatsappweb.com/imagecarrosel
-// @version      0.1.1
+// @name         Whatsapp Wall
+// @namespace    http://whatsappweb.com/whatsapp-wall
+// @version      0.2.0
 // @description  Whatsapp web media slide show!
-// @author       ViZeke
+// @author       Tom Van Rossom
 // @match        https://web.whatsapp.com/
 // @grant        none
 // @require      https://code.jquery.com/jquery-2.1.4.min.js
@@ -33,8 +33,9 @@
     addGlobalStyle( 'div.chat-body { background-color: rgba(255,255,255,0.8); flex-grow: 0; padding: 8px; border-radius: 4px; }' );
 
     addGlobalStyle( 'div.media-panel-header { z-index: 999; background-color: transparent; }' );
+    addGlobalStyle('span.media-caption { z-index: 999; background-color: white; padding: 15px; border-radius: 5px; }');
 
-    addGlobalStyle( 'div.media-content { position: absolute; width: 100%; height: 100%; padding: 0; }' );
+    addGlobalStyle('div.media-content { background-color: black; position: absolute; width: 100%; height: 100%; padding: 0; }');
     addGlobalStyle( 'div.media-content button.btn-media-next { display: none; }' );
     addGlobalStyle( 'div.media-content button.btn-media-prev { display: none; }' );
 
@@ -42,6 +43,12 @@
 
     //Init on global context
     $( document ).ready( function() {
+
+        var uniqueImages = new Set();
+        var currentImage;
+        var imagePointer;
+        var latestImageMessage = '16:15';
+        var newImages;
 
         function getMediaParent() {
             let divMedia = $( 'div.media > div.object-fit > div' );
@@ -63,6 +70,8 @@
             var target = $( '#app > div > span:nth-child(2)' )[ 0 ];
             // create an observer instance
             imageObserver = new MutationObserver( function( mutations ) {
+                console.log('observeImages');
+                console.log(mutations);
                 var divParent = getMediaParent();
                 var h = divParent.height();
                 var w = divParent.width();
@@ -79,7 +88,15 @@
                         startTimeOutNext( e.target.duration * 1000 );
                     }, false );
 
-                    if ( ( mediaObj.is( 'img' ) ) || ( mediaObj.is( 'video' ) ) )
+                    if (( mediaObj.is('img') ) || ( mediaObj.is('video') )) {
+
+                        var src = mediaObj.attr('src');
+                        currentImage = src;
+                        console.log('currentImage: ' + currentImage);
+                        uniqueImages.add(src);
+                        console.log('totalImages: ' + uniqueImages.size);
+                        console.log(uniqueImages);
+
                         if ( w / h > 1.78 ) {
                             mediaObj.css( 'width', '100%' ).css( 'height', 'auto' );
                             divParent.css( 'width', '100%' ).css( 'height', 'auto' );
@@ -87,6 +104,7 @@
                             mediaObj.css( 'height', '100%' ).css( 'width', 'auto' );
                             divParent.css( 'height', '100%' ).css( 'width', 'auto' );
                         }
+                    }
                 }
 
                 // observer.disconnect();
@@ -107,7 +125,18 @@
 
             var target = $( '#main > div.pane-body.pane-chat-tile-container > div > div > div.message-list' )[ 0 ];
             messagesObserver = new MutationObserver( function( mutations ) {
-                nextMedia();
+                console.log('observeMessages');
+                console.log(mutations);
+
+                let newImageMessages = search(mutations);
+                if (newImageMessages.length > 0) {
+                    console.log(newImageMessages);
+                    console.log('New images have arrived');
+                    latestImageMessage = newImageMessages[newImageMessages.length - 1];
+                    console.log(newImageMessages);
+                    newImages = true;
+                    nextMedia();
+                }
             } );
 
             // configuration of the observer:
@@ -115,6 +144,59 @@
 
             // pass in the target node, as well as the observer options
             messagesObserver.observe( target, config );
+        }
+
+        function search(mutations) {
+            return mutations.map(function (mutation) {
+                console.log('map');
+                return mutation.addedNodes;
+            }).reduce(function (allMutations, mutationNodes) {
+                console.log('reduce');
+                allMutations.push(mutationNodes[0]);
+
+                return allMutations;
+                /* This is important! */
+            }, []).filter(function (node) {
+                console.log('filter');
+                return node && node.className && node.className.indexOf('msg') > -1;
+            }).map(function (node) {
+                console.log('map 2');
+                return node.children[1];
+            }).filter(function (node) {
+                console.log('filter 2');
+                return node && node.className && node.className.indexOf('message-image') > -1;
+            }).map(function (node) {
+                console.log('map 3');
+                return node.children[0];
+            }).map(function (node) {
+                console.log('map 4');
+                return node.children[2];
+            }).map(function (node) {
+                console.log('map 5');
+                return node.children;
+            }).reduce(function (allChildren, children) {
+                console.log('reduce 2');
+                console.log(children);
+                Array.prototype.push.apply(allChildren, children);
+
+                //lChildren = allChildren.concat(children);
+                console.log(allChildren);
+                return allChildren;
+            }, []).filter(function (node) {
+                console.log('filter 3');
+                return node && node.className && node.className === 'message-meta text-clickable';
+            }).map(function (node) {
+                console.log('map 6');
+                return node.innerText;
+            })
+                /*    .filter(function(time){
+                    console.log('filter 4');
+                    console.log(latestImageMessage);
+                    console.log(time);
+                    return latestImageMessage.localeCompare(time) === -1 || (latestImageMessage.localeCompare(time) === 1 && time.startsWith('00') && latestImageMessage.startsWith('23'));
+                })*/
+                ;
+
         }
 
         var timeOutNext;
@@ -127,20 +209,87 @@
 
             timeOutNext = setTimeout( function() {
                 timeOutNext = undefined;
-                nextMedia( transitionInterval );
+                nextMedia();
             }, transitionInterval );
         }
 
         function nextMedia() {
             if ( !timeOutNext ) {
-                // Send KeyDown Event
-                let event = new Event( 'keydown' );
-                event.keyCode = 39; // keyright
-                window.dispatchEvent( event );
+                console.log('nextMedia');
+
+                if (newImages) {
+                    newImages = false;
+                    imagePointer = currentImageShown();
+                    var src = currentImage;
+                    var prevSrc = null;
+                    do {
+                        prevSrc = src;
+                        src = goToNext();
+                        console.log('scroll: ' + src);
+                    } while (uniqueImages.has(src) && prevSrc !== src);
+
+                } else if (imagePointer) {
+                    console.log('Searching for: ' + imagePointer);
+                    for (var i = 0; i < uniqueImages.size; i++) {
+                        let src = goToPrevious();
+
+                        if (imagePointer.localeCompare(src) === 0) {
+                            console.log('Found: ' + imagePointer);
+                            imagePointer = undefined;
+                            goToNext();
+                            break;
+                        }
+
+                    }
+                } else {
+                    var previousImage = currentImage;
+
+                    let src = goToNext();
+                    if (src === previousImage) {
+                        console.log('The End');
+
+                        for (var i = 0; i < uniqueImages.size; i++) {
+                            let src = goToPrevious();
+                        }
+
+                    }
+                }
             }
         }
 
+        function goToNext() {
+            // Send KeyDown Event
+            let event = new Event('keydown');
+            event.keyCode = 39; // keyright
+            window.dispatchEvent(event);
+
+            return currentImageShown();
+        }
+
+
+        function goToPrevious() {
+            // Send KeyDown Event
+            let event = new Event('keydown');
+            event.keyCode = 37; // keyleft
+            window.dispatchEvent(event);
+
+            return currentImageShown();
+        }
+
+        function currentImageShown() {
+            var divParent = getMediaParent();
+            if (divParent && divParent.children) {
+                var mediaObj = $(divParent.children()[0]);
+                if (( mediaObj.is('img') ) || ( mediaObj.is('video') )) {
+
+                    return mediaObj.attr('src');
+                }
+            }
+            return 0;
+        }
+
         function startObservers() {
+            console.log('startObservers');
             observeImages();
             observeMessages();
         }
