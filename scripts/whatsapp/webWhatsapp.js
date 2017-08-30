@@ -6,6 +6,7 @@
 // @author       Tom Van Rossom
 // @match        https://web.whatsapp.com/
 // @grant        none
+// @supportURL   https://github.com/tomvanrossom/Whatsapp-Wall
 // @require      https://code.jquery.com/jquery-2.1.4.min.js
 // ==/UserScript==
 
