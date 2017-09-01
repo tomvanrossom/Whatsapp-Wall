@@ -49,7 +49,7 @@
         var currentImage;
         var imagePointer;
         var latestImageMessage = '16:15';
-        var newImages;
+        var newImages=false;
 
         function getMediaParent() {
             let divMedia = $( 'div.media > div.object-fit > div' );
@@ -71,8 +71,8 @@
             var target = $( '#app > div > span:nth-child(2)' )[ 0 ];
             // create an observer instance
             imageObserver = new MutationObserver( function( mutations ) {
-                console.log('observeImages');
-                console.log(mutations);
+                //console.log('observeImages');
+                //console.log(mutations);
                 var divParent = getMediaParent();
                 var h = divParent.height();
                 var w = divParent.width();
@@ -93,10 +93,10 @@
 
                         var src = mediaObj.attr('src');
                         currentImage = src;
-                        console.log('currentImage: ' + currentImage);
+                        //console.log('currentImage: ' + currentImage);
                         uniqueImages.add(src);
-                        console.log('totalImages: ' + uniqueImages.size);
-                        console.log(uniqueImages);
+                        //console.log('totalImages: ' + uniqueImages.size);
+                        //console.log(uniqueImages);
 
                         if ( w / h > 1.78 ) {
                             mediaObj.css( 'width', '100%' ).css( 'height', 'auto' );
@@ -185,18 +185,18 @@
                 return allChildren;
             }, []).filter(function (node) {
                 console.log('filter 3');
-                return node && node.className && node.className === 'message-meta text-clickable';
+                return node && node.className && node.className.indexOf('message-meta') > -1;
             }).map(function (node) {
                 console.log('map 6');
                 return node.innerText;
             })
-                /*    .filter(function(time){
+            /*    .filter(function(time){
                     console.log('filter 4');
                     console.log(latestImageMessage);
                     console.log(time);
                     return latestImageMessage.localeCompare(time) === -1 || (latestImageMessage.localeCompare(time) === 1 && time.startsWith('00') && latestImageMessage.startsWith('23'));
                 })*/
-                ;
+            ;
 
         }
 
@@ -218,43 +218,41 @@
             if ( !timeOutNext ) {
                 console.log('nextMedia');
 
+                var currImg = currentImageShown();
                 if (newImages) {
-                    newImages = false;
-                    imagePointer = currentImageShown();
-                    var src = currentImage;
-                    var prevSrc = null;
-                    do {
-                        prevSrc = src;
-                        src = goToNext();
-                        console.log('scroll: ' + src);
-                    } while (uniqueImages.has(src) && prevSrc !== src);
+                    console.log('new images have arrived: store pointer');
+                    imagePointer = currImg;
+                }
+                var src = goToNext();//normal
 
-                } else if (imagePointer) {
-                    console.log('Searching for: ' + imagePointer);
-                    for (var i = 0; i < uniqueImages.size; i++) {
-                        let src = goToPrevious();
-
-                        if (imagePointer.localeCompare(src) === 0) {
-                            console.log('Found: ' + imagePointer);
-                            imagePointer = undefined;
-                            goToNext();
-                            break;
-                        }
-
-                    }
-                } else {
-                    var previousImage = currentImage;
-
-                    let src = goToNext();
-                    if (src === previousImage) {
-                        console.log('The End');
-
+                if(!uniqueImages.has(src)){
+                    console.log('image never shown before: do nothing');
+                }else{ 
+                    if(newImages){
+                        console.log('new images have arrived: go to first new image');
+                        var prevSrc = null;
+                        do {
+                            prevSrc = src;
+                            src = goToNext();
+                            console.log('scroll: ' + src);
+                        } while (uniqueImages.has(src) && prevSrc !== src);
+                        newImages = false;
+                    } else if (src === currImg) {
+                        console.log('The end: go back');
                         for (var i = 0; i < uniqueImages.size; i++) {
                             let src = goToPrevious();
-                        }
 
+                            if (imagePointer && imagePointer.localeCompare(src) === 0) {
+                                console.log('Found: ' + imagePointer);
+                                imagePointer = undefined;
+                                goToNext();
+                                break;
+                            }
+
+                        }
                     }
                 }
+
             }
         }
 
