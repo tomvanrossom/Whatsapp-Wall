@@ -93,7 +93,9 @@
                             var src = mediaObj.attr('src');
                             currentImage = src;
                             //console.log('currentImage: ' + currentImage);
-                            uniqueImages.add(src);
+                            if(src){
+                                uniqueImages.add(src);
+                            }
                             //console.log('totalImages: ' + uniqueImages.size);
                             //console.log(uniqueImages);
 
@@ -209,25 +211,51 @@
                         newImages = false;
                     } 
                     if (src === currImg) {
-                        console.log('The end: go back');
-                        let prevSrc = null;
-                        while (prevSrc !== src) {
-                            console.log('scroll backwards');
-                            prevSrc = src;
-                            src = goToPrevious();
+                        if(isItReallyTheEnd(src)){
 
-                            if (imagePointer && imagePointer.localeCompare(src) === 0) {
-                                console.log('Previous location found: ' + imagePointer);
-                                imagePointer = undefined;
-                                goToNext();
-                                break;
+                            console.log('The end: go back');
+                            let prevSrc;
+                            let index = uniqueImages.lenght * 2;
+                            index = index < 100? 100:index;
+                            while (prevSrc !== src || 0 > index--) {
+                                console.log('scroll backwards');
+                                prevSrc = src;
+                                src = goToPrevious();
+
+                                if (imagePointer && imagePointer.localeCompare(src) === 0) {
+                                    console.log('Previous location found: ' + imagePointer);
+                                    imagePointer = undefined;
+                                    goToNext();
+                                    break;
+                                }
+                                if(prevSrc === src){
+                                    console.log('The beginning?: maybe the same image is used multiple times');                        
+                                    src = goToPrevious();
+                                }
+
                             }
-
+                            if (src === currImg) {
+                                console.log('It is still stuck :(');
+                                src = goToPrevious();
+                                src = goToPrevious();
+                            }
                         }
                     }
                 }
 
             }
+        }
+
+        function isItReallyTheEnd(src) {
+            console.log('The end?: maybe the same image is used multiple times');                        
+            let prevSrc = src;
+            let index = 5;
+            while (prevSrc === src && 0 < index--) {                
+                prevSrc = src;
+                console.log('check next');
+                src = goToNext();
+            }
+            return prevSrc === src;
         }
 
         function goToNext() {
@@ -260,7 +288,7 @@
             }
             console.log('Something is not right');
             startTimeOutNext();
-            return 0;
+            return 'not found';
         }
 
         function startObservers() {
