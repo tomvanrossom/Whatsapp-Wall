@@ -48,7 +48,6 @@
         var uniqueImages = new Set();
         var currentImage;
         var imagePointer;
-        var latestImageMessage = '16:15';
         var newImages=false;
 
         function getMediaParent() {
@@ -128,14 +127,12 @@
             var target = $( '#main > div.pane-body.pane-chat-tile-container > div > div > div.message-list' )[ 0 ];
             messagesObserver = new MutationObserver( function( mutations ) {
                 console.log('observeMessages');
-                console.log(mutations);
+                //console.log(mutations);
 
-                let newImageMessages = search(mutations);
+                let newImageMessages = searchNewImageMessages(mutations);
                 if (newImageMessages.length > 0) {
-                    console.log(newImageMessages);
-                    console.log('New images have arrived');
-                    latestImageMessage = newImageMessages[newImageMessages.length - 1];
-                    console.log(newImageMessages);
+                    //console.log(newImageMessages);
+                    console.log('New images/videos have arrived');                    
                     newImages = true;
                     nextMedia();
                 }
@@ -148,7 +145,7 @@
             messagesObserver.observe( target, config );
         }
 
-        function search(mutations) {
+        function searchNewImageMessages (mutations) {
             return mutations.map(function (mutation) {
                 console.log('map');
                 return mutation.addedNodes;
@@ -166,38 +163,8 @@
                 return node.children[1];
             }).filter(function (node) {
                 console.log('filter 2');
-                return node && node.className && node.className.indexOf('message-image') > -1;
-            }).map(function (node) {
-                console.log('map 3');
-                return node.children[0];
-            }).map(function (node) {
-                console.log('map 4');
-                return node.children[2];
-            }).map(function (node) {
-                console.log('map 5');
-                return node.children;
-            }).reduce(function (allChildren, children) {
-                console.log('reduce 2');
-                console.log(children);
-                Array.prototype.push.apply(allChildren, children);
-
-                //lChildren = allChildren.concat(children);
-                console.log(allChildren);
-                return allChildren;
-            }, []).filter(function (node) {
-                console.log('filter 3');
-                return node && node.className && node.className.indexOf('message-meta') > -1;
-            }).map(function (node) {
-                console.log('map 6');
-                return node.innerText;
-            })
-            /*    .filter(function(time){
-                    console.log('filter 4');
-                    console.log(latestImageMessage);
-                    console.log(time);
-                    return latestImageMessage.localeCompare(time) === -1 || (latestImageMessage.localeCompare(time) === 1 && time.startsWith('00') && latestImageMessage.startsWith('23'));
-                })*/
-            ;
+                return node && node.className && (node.className.indexOf('message-image') > -1 || node.className.indexOf('message-video') > -1);
+            });
 
         }
 
@@ -247,7 +214,7 @@
                             src = goToPrevious();
 
                             if (imagePointer && imagePointer.localeCompare(src) === 0) {
-                                console.log('Found: ' + imagePointer);
+                                console.log('Previous location found: ' + imagePointer);
                                 imagePointer = undefined;
                                 goToNext();
                                 break;
