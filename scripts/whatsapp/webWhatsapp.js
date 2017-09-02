@@ -74,40 +74,41 @@
                 //console.log('observeImages');
                 //console.log(mutations);
                 var divParent = getMediaParent();
-                var h = divParent.height();
-                var w = divParent.width();
-                var mediaObj = $( divParent.children()[ 0 ] );
+                if(divParent){
+                    var h = divParent.height();
+                    var w = divParent.width();
+                    var mediaObj = $( divParent.children()[ 0 ] );
 
-                if ( mediaObj[ 0 ] ) {
-                    if ( mediaObj.is( 'img' ) ) {
-                        mediaObj.load( function( e ) {
-                            startTimeOutNext();
-                        } );
-                    }
+                    if ( mediaObj[ 0 ] ) {
+                        if ( mediaObj.is( 'img' ) ) {
+                            mediaObj.load( function( e ) {
+                                startTimeOutNext();
+                            } );
+                        }
 
-                    mediaObj[ 0 ].addEventListener( 'loadeddata', function( e ) {
-                        startTimeOutNext( e.target.duration * 1000 );
-                    }, false );
+                        mediaObj[ 0 ].addEventListener( 'loadeddata', function( e ) {
+                            startTimeOutNext( e.target.duration * 1000 );
+                        }, false );
 
-                    if (( mediaObj.is('img') ) || ( mediaObj.is('video') )) {
+                        if (( mediaObj.is('img') ) || ( mediaObj.is('video') )) {
 
-                        var src = mediaObj.attr('src');
-                        currentImage = src;
-                        //console.log('currentImage: ' + currentImage);
-                        uniqueImages.add(src);
-                        //console.log('totalImages: ' + uniqueImages.size);
-                        //console.log(uniqueImages);
+                            var src = mediaObj.attr('src');
+                            currentImage = src;
+                            //console.log('currentImage: ' + currentImage);
+                            uniqueImages.add(src);
+                            //console.log('totalImages: ' + uniqueImages.size);
+                            //console.log(uniqueImages);
 
-                        if ( w / h > 1.78 ) {
-                            mediaObj.css( 'width', '100%' ).css( 'height', 'auto' );
-                            divParent.css( 'width', '100%' ).css( 'height', 'auto' );
-                        } else {
-                            mediaObj.css( 'height', '100%' ).css( 'width', 'auto' );
-                            divParent.css( 'height', '100%' ).css( 'width', 'auto' );
+                            if ( w / h > 1.78 ) {
+                                mediaObj.css( 'width', '100%' ).css( 'height', 'auto' );
+                                divParent.css( 'width', '100%' ).css( 'height', 'auto' );
+                            } else {
+                                mediaObj.css( 'height', '100%' ).css( 'width', 'auto' );
+                                divParent.css( 'height', '100%' ).css( 'width', 'auto' );
+                            }
                         }
                     }
                 }
-
                 // observer.disconnect();
             } );
 
@@ -219,7 +220,7 @@
                 console.log('nextMedia');
 
                 var currImg = currentImageShown();
-                if (newImages) {
+                if (newImages && !imagePointer) {
                     console.log('new images have arrived: store pointer');
                     imagePointer = currImg;
                 }
@@ -230,17 +231,20 @@
                 }else{ 
                     if(newImages){
                         console.log('new images have arrived: go to first new image');
-                        var prevSrc = null;
+                        let prevSrc = null;
                         do {
                             prevSrc = src;
                             src = goToNext();
                             console.log('scroll: ' + src);
                         } while (uniqueImages.has(src) && prevSrc !== src);
                         newImages = false;
-                    } else if (src === currImg) {
+                    } 
+                    if (src === currImg) {
                         console.log('The end: go back');
-                        for (var i = 0; i < uniqueImages.size; i++) {
-                            let src = goToPrevious();
+                        let prevSrc = null;
+                        while (prevSrc !== src) {
+                            prevSrc = src;
+                            src = goToPrevious();
 
                             if (imagePointer && imagePointer.localeCompare(src) === 0) {
                                 console.log('Found: ' + imagePointer);
