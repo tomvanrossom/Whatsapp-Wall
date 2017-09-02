@@ -37,8 +37,7 @@
     addGlobalStyle('span.media-caption { z-index: 999; background-color: white; padding: 15px; border-radius: 5px; }');
 
     addGlobalStyle('div.media-content { background-color: black; position: absolute; width: 100%; height: 100%; padding: 0; }');
-    addGlobalStyle( 'div.media-content button.btn-media-next { display: none; }' );
-    addGlobalStyle( 'div.media-content button.btn-media-prev { display: none; }' );
+    addGlobalStyle( '.btn-round { z-index: -1; }' );
 
     addGlobalStyle( 'div.media > div.object-fit > div { position: absolute; padding: 0; }' );
 
@@ -106,6 +105,9 @@
                                 divParent.css( 'height', '100%' ).css( 'width', 'auto' );
                             }
                         }
+                    }else{
+                        console.log('not image or video!? ');
+                        startTimeOutNext();
                     }
                 }
                 // observer.disconnect();
@@ -202,7 +204,7 @@
                         do {
                             prevSrc = src;
                             src = goToNext();
-                            console.log('scroll: ' + src);
+                            console.log('scroll forward to new');
                         } while (uniqueImages.has(src) && prevSrc !== src);
                         newImages = false;
                     } 
@@ -210,6 +212,7 @@
                         console.log('The end: go back');
                         let prevSrc = null;
                         while (prevSrc !== src) {
+                            console.log('scroll backwards');
                             prevSrc = src;
                             src = goToPrevious();
 
@@ -255,6 +258,8 @@
                     return mediaObj.attr('src');
                 }
             }
+            console.log('Something is not right');
+            startTimeOutNext();
             return 0;
         }
 
