@@ -20,5 +20,6 @@ Are you looking for displaying whatsapp images on a big-screen, use this TamperM
 ## Tips
 * Turn off the power saving options of your laptop, so that it won't go to sleep
 * If you want to see what is happening, check the console of the browser (F12)
+* Make sure to keep your phone always connected to the internet!
 
 Do you like this repo? Please star! Any questions/remarks: Log an issue. Thanks!
