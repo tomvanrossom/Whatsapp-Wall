@@ -40,6 +40,8 @@
     addGlobalStyle( '.btn-round { z-index: -1; }' );
 
     addGlobalStyle( 'div.media > div.object-fit > div { position: absolute; padding: 0; }' );
+    addGlobalStyle( '.media-viewer .avatar { height: 120px !important; width: 120px !important; margin-top: 110px;}' );
+    addGlobalStyle( '.media-viewer div.chat-body { max-height: 40px; margin-top: 110px; }' );
 
     //Init on global context
     $( document ).ready( function() {
