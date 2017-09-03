@@ -4,9 +4,9 @@ Are you looking for displaying whatsapp images on a big-screen, use this TamperM
 ## Features
 * Endless loop of the photo's.
 * Captions of the photo's are shown on the button
-* Newly send photo's will be showed first. (The slideshow will continue where it left)
+* New photo's will be showed first. (The slideshow will continue, where it left)
 * Video playback
-* Avatar of the sender is shown
+* Profile picture of the sender
 
 ## How to use
 1. Install Tampermonkey Chrome plugin: https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo
