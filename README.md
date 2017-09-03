@@ -16,3 +16,5 @@ Are you looking for displaying whatsapp images on a big-screen, use this TamperM
 1. Click on a photo of the chat
 1. Hit the full-screen button (F11)
 1. Done! Now enjoy the slideshow with your photo's
+
+Do you like this repo? Please star! Any questions/remarks: Log an issue. Thanks!
