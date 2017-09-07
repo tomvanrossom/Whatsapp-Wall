@@ -42,6 +42,11 @@
     addGlobalStyle( 'div.media > div.object-fit > div { position: absolute; padding: 0; }' );
     addGlobalStyle( '.media-viewer .avatar { height: 120px !important; width: 120px !important; margin-top: 110px;}' );
     addGlobalStyle( '.media-viewer div.chat-body { max-height: 40px; margin-top: 110px; }' );
+    addGlobalStyle( '.media-viewer-img {}' );
+    addGlobalStyle( '.fadeIn {animation: fadeInOut 10s;}' );    
+    addGlobalStyle( '@keyframes fadeInOut {    0% {        opacity: 0;    }    5% {       opacity: 1;    }    45% {       opacity: 1;    }    50% {       opacity: 0;    }  100% {       opacity: 0;    }}' );    
+
+
 
     //Init on global context
     $( document ).ready( function() {
@@ -101,6 +106,8 @@
                             //console.log('totalImages: ' + uniqueImages.size);
                             //console.log(uniqueImages);
 
+
+                            mediaObj.addClass('fadeIn');
                             if ( w / h > 1.78 ) {
                                 mediaObj.css( 'width', '100%' ).css( 'height', 'auto' );
                                 divParent.css( 'width', '100%' ).css( 'height', 'auto' );
@@ -191,6 +198,8 @@
         function nextMedia() {
             if ( !timeOutNext ) {
                 console.log('nextMedia');
+                fadeOut();
+            
 
                 var currImg = currentImageShown();
                 if (newImages && !imagePointer) {
@@ -292,6 +301,18 @@
             startTimeOutNext();
             return 'not found';
         }
+
+        function fadeOut() {
+            var divParent = getMediaParent();
+            if (divParent && divParent.children) {
+                var mediaObj = $(divParent.children()[0]);
+                if (( mediaObj.is('img') ) || ( mediaObj.is('video') )) {
+
+                    mediaObj.removeClass('fadeIn');
+                }
+            }
+        }
+
 
         function startObservers() {
             console.log('startObservers');
