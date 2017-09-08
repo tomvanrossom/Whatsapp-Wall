@@ -44,7 +44,7 @@
     addGlobalStyle( '.media-viewer div.chat-body { max-height: 40px; margin-top: 110px; }' );
     addGlobalStyle( '.fadeIn {animation: fadeInOut 10s; transition: transform 5s linear; transform: scale(1.1);}' );    
     addGlobalStyle( '@keyframes fadeInOut {    0% {        opacity: 0;    }    5% {       opacity: 1;    }    45% {       opacity: 1;    }    50% {       opacity: 0;    }  100% {       opacity: 0;    }}' );    
-
+    addGlobalStyle( '.media-viewer .avatar {border: 1px solid white; }' );
 
 
     //Init on global context
