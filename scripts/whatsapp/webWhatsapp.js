@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Whatsapp Wall
 // @namespace    http://whatsappweb.com/whatsapp-wall
-// @version      0.2.0
+// @version      0.2.1
 // @description  Whatsapp web media slide show!
 // @author       Tom Van Rossom
 // @match        https://web.whatsapp.com/
