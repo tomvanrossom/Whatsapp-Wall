@@ -10,7 +10,7 @@ Are you looking for displaying whatsapp images on a big-screen, use this TamperM
 
 ## How to use
 1. Install Tampermonkey Chrome plugin: https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo
-1. On the Tampermonkey plugin dashboard, add a new user-script and copy/paste https://github.com/tomvanrossom/Whatsapp-Wall/blob/master/scripts/whatsapp/webWhatsapp.js
+1. On the Tampermonkey plugin dashboard, add a new user-script and copy/paste https://raw.githubusercontent.com/tomvanrossom/Whatsapp-Wall/master/scripts/whatsapp/webWhatsapp.user.js
 1. Go to https://web.whatsapp.com/ and sign in
 1. Click on the chat with the photo's you want to show
 1. Click on a photo of the chat
