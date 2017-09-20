@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Whatsapp Wall
 // @namespace    http://whatsappweb.com/whatsapp-wall
-// @version      0.2.1
+// @version      0.2.2
 // @description  Whatsapp web media slide show!
 // @author       Tom Van Rossom
 // @match        https://web.whatsapp.com/
@@ -210,7 +210,7 @@
                 var src = goToNext();//normal
 
                 if(!uniqueImages.has(src)){
-                    console.log('image never shown before: do nothing');
+                    console.log('image never shown before: do nothing: '+uniqueImages.size);                    
                 }else{ 
                     if(newImages){
                         console.log('new images have arrived: go to first new image');
@@ -254,7 +254,7 @@
                         }
                     }
                 }
-
+                uniqueImages.add(src);
             }
         }
 
