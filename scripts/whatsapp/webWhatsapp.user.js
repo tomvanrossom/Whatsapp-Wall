@@ -230,7 +230,7 @@
                             let index = uniqueImages.lenght * 2;
                             index = index < 100? 100:index;
                             while (prevSrc !== src || 0 > index--) {
-                                console.log('scroll backwards');
+                                console.log('scroll backwards to: '+imagePointer);
                                 prevSrc = src;
                                 src = goToPrevious();
 
