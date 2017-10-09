@@ -1,3 +1,6 @@
+**Not working anymore! Whatsapp has changed it's web client, and I haven't found the time to fix it :(**
+
+
 # Whatsapp Wall
 Are you looking for displaying whatsapp images on a big-screen, use this TamperMonkey script!
 
